@@ -10,7 +10,9 @@ import discord
 from discord.ext import commands
 import os
 import logic
+from dotenv import load_dotenv
 
+load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(intents = intents, command_prefix='!')
@@ -107,6 +109,7 @@ async def abstain(ctx):
   voter = ctx.author
   await kick.vote_abstain(ctx, voter)
 
+print(os.getenv('TOKEN'))
 
 
-client.run('OTYxNjU2NzI1NjA4NDc2Njgy.Yk8Kng.PI5sRKmTl3fMCnsQnQF8z1gq7Y8')
+client.run(os.getenv('TOKEN'))

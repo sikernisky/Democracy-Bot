@@ -10,9 +10,9 @@ import discord
 from discord.ext import commands
 import os
 import logic
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(intents = intents, command_prefix='!')
@@ -108,8 +108,6 @@ async def abstain(ctx):
   kick = logic.VoteKick.active_votekick
   voter = ctx.author
   await kick.vote_abstain(ctx, voter)
-
-print(os.getenv('TOKEN'))
 
 
 client.run(os.getenv('TOKEN'))

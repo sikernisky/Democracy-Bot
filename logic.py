@@ -4,6 +4,9 @@ Teddy Siker
 April 7th, 2022
 
 All logic used for the VoteKick process.
+
+FLAW: CHANNEL IDS ARE HARDCODED. This bot cannot adapt to any server without
+editing the channel IDs in this code.
 """
 import asyncio
 import discord
@@ -34,12 +37,21 @@ class VoteKick(object):
   active_votekick = None
   in_timeout = []
 
-  def __init__(self, all_voters, defendant, client):
+  def __init__(self, all_voters, defendant, caller, client):
     """
     Creates a VoteKick Object.
 
     Parameter all_voters: Everyone who can vote in this VoteKick.
     Precondition: all_voters is a list of Members.
+
+    Parameter defendant: The person who members are voting to kick.
+    Precondition: defendant is a Member object and not the caller.
+
+    Parameter caller: The person who called this VoteKick.
+    Precondition: caller is a Member object and not the defendant.
+
+    Parameter client: The server client.
+    Precondition: client is a valid server client.
     """
     
     assert VoteKick.active_votekick == None, "A VoteKick is already active."
@@ -53,13 +65,15 @@ class VoteKick(object):
     for v in all_voters:
       voter_dict[v] = ''
     voter_dict[defendant] = 'no'
+    voter_dict[caller] = 'yes'
 
 
     self.main_client = client
     self.voters = voter_dict
     self.votes_needed = self.get_threshold()
     self.defendant = defendant
-    self.yes_votes = 0
+    self.caller = caller
+    self.yes_votes = 1
     self.no_votes = 1
     self.abs_votes = 0
 
@@ -353,7 +367,7 @@ class VoteKick(object):
     await ctx.send(msg + '\n' + msg2)  
     
 
-async def votekick(ctx, member, voice_members, client):
+async def votekick(ctx, member, caller, voice_members, client):
   """
   Starts the VoteKick process on member.
 
@@ -362,6 +376,12 @@ async def votekick(ctx, member, voice_members, client):
 
   Parameter member: Person who members are voting to kick.
   Precondition: member is a valid Member object
+
+  Parameter member: Person who called this VoteKick.
+  Precondition: caller is a valid member object
+
+  Parameter client: The discord server client.
+  Precondition: client is a valid client object.
   """
   assert isinstance(ctx, discord.ext.commands.context.Context), "Parameter ctx must be a bot context."
   assert isinstance(member, discord.member.Member), "Parameter member must be a Member object."
@@ -391,7 +411,7 @@ async def votekick(ctx, member, voice_members, client):
   await ctx.send("Starting the VoteKick process on " + member.name + ".\nType **!yes** to vote yes, **!no** to vote no, or **!abstain** to abstain.\nA successful VoteKick requires 60% of all members in no mao zone to vote 'Yes'.")
   
 
-  current_vote = VoteKick(all_voters, defendant, client)
+  current_vote = VoteKick(all_voters, defendant, caller, client)
   await current_vote.print_vote_status(ctx)
   await current_vote.check_conditions(ctx)
   await current_vote.start_timer(ctx)

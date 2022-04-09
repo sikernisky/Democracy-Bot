@@ -51,7 +51,7 @@ async def votekick(ctx, *, member : discord.Member = None):
     await ctx.send("That member is not in **no mao zone**.")
     return
 
-  await logic.votekick(ctx, member, all_members, client)
+  await logic.votekick(ctx, member, ctx.author, all_members, client)
   
 
 @client.command()

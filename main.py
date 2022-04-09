@@ -109,4 +109,4 @@ async def abstain(ctx):
 
 
 
-client.run(os.getenv('TOKEN'))
+client.run('OTYxNjU2NzI1NjA4NDc2Njgy.Yk8Kng.PI5sRKmTl3fMCnsQnQF8z1gq7Y8')

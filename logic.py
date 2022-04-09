@@ -52,6 +52,7 @@ class VoteKick(object):
     voter_dict = {}
     for v in all_voters:
       voter_dict[v] = ''
+    voter_dict[defendant] = 'no'
 
 
     self.main_client = client
@@ -309,7 +310,7 @@ class VoteKick(object):
     await member.move_to(timeout)
 
 
-    await asyncio.sleep(300)
+    await asyncio.sleep(150)
     await member.remove_roles(ccp)
     await member.add_roles(patriot)
     VoteKick.in_timeout.remove(member)
@@ -376,7 +377,7 @@ async def votekick(ctx, member, voice_members, client):
   for m in voice_members:
     if m.name == member.name:
       defendant = m
-    else:
+    elif (not m.bot):
       all_voters.append(m)
 
   if len(all_voters) == 0:
